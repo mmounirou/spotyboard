@@ -17,10 +17,11 @@ import org.rometools.fetcher.impl.FeedFetcherCache;
 import org.rometools.fetcher.impl.HttpURLFeedFetcher;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
+import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
+import com.mmounirou.spotiboard.SpotiBoard;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
@@ -58,16 +59,18 @@ public class BilboardChartRss
 				@Nonnull
 				public Track apply(@Nonnull SyndEntry entry)
 				{
-					String strTitle = entry.getTitle();
-					String[] rankExtendedTitle = strTitle.split(":");
-					String strRank = rankExtendedTitle[0];
-					String[] titleArtist = rankExtendedTitle[1].split(",");
-					String strSong = titleArtist[0];
-					String strArtist = titleArtist[1];
+					try
+					{
+						return toTrack(entry.getTitle());
+					} catch (Exception e)
+					{
+						SpotiBoard.LOGGER.error(String.format("fail to parse %s ", entry.getTitle()));
+						return null;
+					}
 
-					return new Track(Integer.parseInt(strRank), strArtist, strSong);
 				}
-			}).toImmutableSortedSet(new Comparator<Track>()
+
+			}).filter(Predicates.notNull()).toImmutableSortedSet(new Comparator<Track>()
 			{
 
 				@Override
@@ -78,26 +81,33 @@ public class BilboardChartRss
 			});
 
 			return new BilboardChartRss(title, songs);
-		}
-		catch ( IllegalArgumentException e )
+		} catch (IllegalArgumentException e)
 		{
 			throw new ChartRssException(e);
-		}
-		catch ( IOException e )
-		{
-			throw new ChartRssException(e);
-
-		}
-		catch ( FeedException e )
+		} catch (IOException e)
 		{
 			throw new ChartRssException(e);
 
-		}
-		catch ( FetcherException e )
+		} catch (FeedException e)
+		{
+			throw new ChartRssException(e);
+
+		} catch (FetcherException e)
 		{
 			throw new ChartRssException(e);
 		}
 
+	}
+
+	private static Track toTrack(String strTitle)
+	{
+		int rankPos = strTitle.indexOf(":");
+		String strRank = strTitle.substring(0, rankPos);
+		String[] titleArtist = strTitle.substring(rankPos+1).split(",");
+		String strSong = titleArtist[0];
+		String strArtist = titleArtist[1];
+
+		return new Track(Integer.parseInt(strRank), strArtist, strSong);
 	}
 
 	public String getTitle()
@@ -112,9 +122,7 @@ public class BilboardChartRss
 
 	public static void main(String[] args) throws MalformedURLException, ChartRssException
 	{
-		BilboardChartRss bilboardChartRss = BilboardChartRss.getInstance("http://www.billboard.com/rss/charts/hot-100");
-		String title = bilboardChartRss.getTitle();
-		System.out.println(title);
-		System.out.println(Joiner.on("\n").join(bilboardChartRss.getSongs()));
+		Track track = toTrack("46: Pink Friday: Roman Reloaded, Nicki Minaj");
+		System.out.println(track);
 	}
 }
