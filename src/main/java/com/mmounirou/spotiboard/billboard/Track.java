@@ -7,6 +7,7 @@ import com.google.common.base.Objects;
 public class Track
 {
 
+	protected static final Track NULL = new Track("", "");
 	private final int m_rank;
 	private final String m_artist;
 	private final String m_song;
@@ -16,6 +17,11 @@ public class Track
 		m_rank = rank;
 		m_artist = strArtist;
 		m_song = strSong;
+	}
+
+	public Track(@Nonnull String strArtist, @Nonnull String strSong)
+	{
+		this(-1, strArtist, strSong);
 	}
 
 	public int getRank()
@@ -42,15 +48,15 @@ public class Track
 	@Override
 	public boolean equals(Object obj)
 	{
-		if ( this == obj )
+		if (this == obj)
 		{
 			return true;
 		}
-		if ( obj == null )
+		if (obj == null)
 		{
 			return false;
 		}
-		if ( !(obj instanceof Track) )
+		if (!(obj instanceof Track))
 		{
 			return false;
 		}
