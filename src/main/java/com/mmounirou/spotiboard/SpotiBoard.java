@@ -39,8 +39,13 @@ public class SpotiBoard
 	 */
 	public static void main(String[] args) throws IOException
 	{
+		if (args.length == 0)
+		{
+			System.err.println("usage : java -jar spotiboard.jar <charts-folder>");
+			return;
+		}
 
-		final File resultDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory(), "Charts");
+		final File resultDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory(), args[0]);
 		resultDir.mkdirs();
 
 		Iterable<String> chartsRss = getCharts();
