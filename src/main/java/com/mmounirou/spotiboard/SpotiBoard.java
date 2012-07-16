@@ -3,6 +3,7 @@ package com.mmounirou.spotiboard;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -17,9 +18,11 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.mmounirou.spotiboard.billboard.BilboardChartRss;
 import com.mmounirou.spotiboard.billboard.ChartRssException;
 import com.mmounirou.spotiboard.billboard.Track;
@@ -70,7 +73,9 @@ public class SpotiBoard
 						Map<Track, String> trackHrefs = hrefQuery.getTrackHrefs(bilboardChartRss.getSongs());
 
 						File resultFile = new File(resultDir, bilboardChartRss.getTitle());
-						FileUtils.writeLines(resultFile, Charsets.UTF_8.displayName(), trackHrefs.values());
+						List<String> lines = Lists.newLinkedList(FluentIterable.from(trackHrefs.keySet()).transform(Functions.toStringFunction()));
+						lines.addAll(trackHrefs.values());
+						FileUtils.writeLines(resultFile, Charsets.UTF_8.displayName(), lines);
 
 						LOGGER.info(String.format("%s chart exported in %s in %d s", bilboardChartRss.getTitle(), resultFile.getAbsolutePath(),
 								(int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - begin)));
