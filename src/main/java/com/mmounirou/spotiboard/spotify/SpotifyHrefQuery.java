@@ -46,8 +46,8 @@ public class SpotifyHrefQuery
 
 		for (Track track : tracks)
 		{
-			String strHref = m_trackCache.get(track);
-			if (strHref == null)
+			String strHref = getFromCache(track);
+			if ( strHref == null )
 			{
 				if ( queryCount != 0 && (queryCount % QUERY_LIMIT_BY_SECONDS) == 0 )
 				{
@@ -73,7 +73,7 @@ public class SpotifyHrefQuery
 					} else
 					{
 						strHref = findBestMatchingTrack(xtracks, track).getHref();
-						m_trackCache.put(track, strHref);
+						putInCache(track, strHref);
 						queryCount++;
 					}
 				} catch (IOException e)
@@ -90,6 +90,23 @@ public class SpotifyHrefQuery
 			}
 		}
 		return ImmutableMap.copyOf(result);
+	}
+
+	private void putInCache(Track track, String strHref)
+	{
+		if ( m_trackCache != null )
+		{
+			m_trackCache.put(track, strHref);
+		}
+	}
+
+	private String getFromCache(Track track)
+	{
+		if ( m_trackCache != null )
+		{
+			return m_trackCache.get(track);
+		}
+		return null;
 	}
 
 	private XTracks findBestMatchingTrack(List<XTracks> xtracks, final Track track)
