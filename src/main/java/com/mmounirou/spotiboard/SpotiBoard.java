@@ -45,7 +45,7 @@ public class SpotiBoard
 			return;
 		}
 
-		final File resultDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory(), args[0]);
+		final File resultDir = new File(args[0]);
 		resultDir.mkdirs();
 
 		Iterable<String> chartsRss = getCharts();
