@@ -2,8 +2,6 @@ package com.mmounirou.spotiboard.spotify;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -130,15 +128,28 @@ public class SpotifyHrefQuery
 		 * o1.getAvailability().compareTo(o2.getAvailability()); } });
 		 */
 
-		// find with the perfect artist name
+		// find with the perfect match
 		List<XTracks> withArtistName = Lists.newArrayList(Iterables.filter(xtracks, new Predicate<XTracks>()
 		{
 			@Override
 			public boolean apply(@Nullable XTracks xtrack)
 			{
-				return artistNames.contains(xtrack.getArtistName().trim());
+				return artistNames.contains(xtrack.getArtistName().trim()) && StringUtils.equalsIgnoreCase(xtrack.getTrackName().trim(), track.getArtist().trim());
 			}
 		}));
+
+		if ( withArtistName.isEmpty() )
+		{
+			// find with the perfect artist name
+			withArtistName = Lists.newArrayList(Iterables.filter(xtracks, new Predicate<XTracks>()
+			{
+				@Override
+				public boolean apply(@Nullable XTracks xtrack)
+				{
+					return artistNames.contains(xtrack.getArtistName().trim());
+				}
+			}));
+		}
 
 		// Try with artist name is contained (featuring in artist name)
 		if ( withArtistName.isEmpty() )
