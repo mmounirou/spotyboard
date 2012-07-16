@@ -49,7 +49,7 @@ public class SpotifyHrefQuery
 			String strHref = m_trackCache.get(track);
 			if (strHref == null)
 			{
-				if ((queryCount % QUERY_LIMIT_BY_SECONDS) == 0)
+				if ( queryCount != 0 && (queryCount % QUERY_LIMIT_BY_SECONDS) == 0 )
 				{
 					try
 					{
