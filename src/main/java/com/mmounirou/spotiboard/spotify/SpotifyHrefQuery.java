@@ -2,6 +2,8 @@ package com.mmounirou.spotiboard.spotify;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +46,7 @@ public class SpotifyHrefQuery
 		Map<Track, String> result = Maps.newLinkedHashMap();
 		int queryCount = 0;
 
-		for (Track track : tracks)
+		for ( Track track : tracks )
 		{
 			String strHref = getFromCache(track);
 			if ( strHref == null )
@@ -54,7 +56,8 @@ public class SpotifyHrefQuery
 					try
 					{
 						Thread.sleep(TimeUnit.SECONDS.toMillis(1));
-					} catch (InterruptedException e)
+					}
+					catch ( InterruptedException e )
 					{
 						// DO nothing
 					}
@@ -67,24 +70,27 @@ public class SpotifyHrefQuery
 					String strXmlResult = resource.path("search/1/track").queryParam("q", track.getSong()).get(String.class);
 
 					List<XTracks> xtracks = parseResult(strXmlResult);
-					if (xtracks.isEmpty())
+					if ( xtracks.isEmpty() )
 					{
 						SpotiBoard.LOGGER.warn(String.format("no spotify song for %s:%s", track.getArtist(), track.getSong()));
-					} else
+					}
+					else
 					{
 						strHref = findBestMatchingTrack(xtracks, track).getHref();
 						putInCache(track, strHref);
 						queryCount++;
 					}
-				} catch (IOException e)
+				}
+				catch ( IOException e )
 				{
 					throw new SpotifyException(e);
-				} catch (SAXException e)
+				}
+				catch ( SAXException e )
 				{
 					throw new SpotifyException(e);
 				}
 			}
-			if (strHref != null)
+			if ( strHref != null )
 			{
 				result.put(track, strHref);
 			}
@@ -111,12 +117,18 @@ public class SpotifyHrefQuery
 
 	private XTracks findBestMatchingTrack(List<XTracks> xtracks, final Track track)
 	{
-		if (xtracks.size() == 1)
+		if ( xtracks.size() == 1 )
 		{
 			return xtracks.get(0);
 		}
 
 		final Set<String> artistNames = split(track.getArtist(), new String[] { "Featuring", "Feat\\.", "&" });
+		/*
+		 * Collections.sort(xtracks, new Comparator<XTracks>() {
+		 * 
+		 * @Override public int compare(XTracks o1, XTracks o2) { return
+		 * o1.getAvailability().compareTo(o2.getAvailability()); } });
+		 */
 
 		// find with the perfect artist name
 		List<XTracks> withArtistName = Lists.newArrayList(Iterables.filter(xtracks, new Predicate<XTracks>()
@@ -129,7 +141,7 @@ public class SpotifyHrefQuery
 		}));
 
 		// Try with artist name is contained (featuring in artist name)
-		if (withArtistName.isEmpty())
+		if ( withArtistName.isEmpty() )
 		{
 			withArtistName = Lists.newArrayList(Iterables.filter(xtracks, new Predicate<XTracks>()
 			{
@@ -150,7 +162,7 @@ public class SpotifyHrefQuery
 		}
 
 		// no match found use all result
-		if (withArtistName.isEmpty())
+		if ( withArtistName.isEmpty() )
 		{
 			XTracks usedTrack = xtracks.get(0);
 			SpotiBoard.LOGGER.warn(String.format("no perfect match found for %s:%s (%s) use more popular song %s:%s", track.getArtist(), track.getSong(),
@@ -173,23 +185,24 @@ public class SpotifyHrefQuery
 			previousSize = result.size();
 			Set<String> temp = Sets.newHashSet(result);
 			result.clear();
-			for (String elmt : temp)
+			for ( String elmt : temp )
 			{
-				for (String separator : separators)
+				for ( String separator : separators )
 				{
 					List<String> splitted = Arrays.asList(elmt.split(separator));
-					if (splitted.size() > 1)
+					if ( splitted.size() > 1 )
 					{
 						result.addAll(splitted);
 					}
 				}
 			}
-			if (result.isEmpty())
+			if ( result.isEmpty() )
 			{
 				result = temp;
 			}
 
-		} while (previousSize != result.size());
+		}
+		while ( previousSize != result.size() );
 
 		return Sets.newHashSet(Iterables.transform(result, new Function<String, String>()
 		{
@@ -223,9 +236,11 @@ public class SpotifyHrefQuery
 		digester.addBeanPropertySetter("tracks/track/album/availability/territories", "availability");
 	}
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws IOException, SpotifyException
 	{
-		System.out.println(split("Gabry Ponte & Sophia Del Carmen Featuring Pitbull Feat. Jay-Z", new String[] { "Featuring", "Feat\\.", "&" }));
+		Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track("Adele", "Rumour Has It")));
+		System.out.println(trackHrefs);
+
 	}
 
 }
