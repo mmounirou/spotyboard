@@ -158,7 +158,7 @@ public class SpotifyHrefQuery
 			withArtistName = xtracks;
 		}
 
-		return xtracks.get(0);
+		return withArtistName.get(0);
 
 	}
 
