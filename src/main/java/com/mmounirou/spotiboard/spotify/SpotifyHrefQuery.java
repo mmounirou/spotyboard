@@ -134,7 +134,7 @@ public class SpotifyHrefQuery
 			@Override
 			public boolean apply(@Nullable XTracks xtrack)
 			{
-				return artistNames.contains(xtrack.getArtistName().trim()) && StringUtils.equalsIgnoreCase(xtrack.getTrackName().trim(), track.getArtist().trim());
+				return artistNames.contains(xtrack.getArtistName().trim()) && StringUtils.equalsIgnoreCase(xtrack.getTrackName().trim(), track.getSong().trim());
 			}
 		}));
 
@@ -249,7 +249,7 @@ public class SpotifyHrefQuery
 
 	public static void main(String[] args) throws IOException, SpotifyException
 	{
-		Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track("Adele", "Rumour Has It")));
+		Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track("Adele", "Set Fire To The Rain")));
 		System.out.println(trackHrefs);
 
 	}

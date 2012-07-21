@@ -4,10 +4,12 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
@@ -24,8 +26,15 @@ public class TrackCache implements Closeable
 		File cacheDir = new File(FileUtils.getTempDirectory(), "spotify");
 		cacheDir.mkdirs();
 		File cacheFile = new File(cacheDir, "hrefCache");
+		if (FileUtils.isFileOlder(cacheFile, DateUtils.addDays(new Date(), -1)))
+		{
+			cacheFile.delete();
+			System.out.println("Delete cache ..." + cacheFile.getAbsolutePath());
+		}
+
 		if (cacheFile.exists())
 		{
+			System.out.println("load cache ..." + cacheFile.getAbsolutePath());
 			List<String> strExtendedTracks = Files.readLines(cacheFile, Charsets.UTF_8);
 			for (String strExtendedTrack : strExtendedTracks)
 			{
