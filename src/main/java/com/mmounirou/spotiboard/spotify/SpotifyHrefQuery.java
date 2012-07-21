@@ -65,7 +65,7 @@ public class SpotifyHrefQuery
 				{
 					Client client = Client.create();
 					WebResource resource = client.resource("http://ws.spotify.com");
-					String strXmlResult = resource.path("search/1/track").queryParam("q", track.getSong()).get(String.class);
+					String strXmlResult = resource.path("search/1/track").queryParam("q", track.getSong().replace(" ", "+")).get(String.class);
 
 					List<XTracks> xtracks = parseResult(strXmlResult);
 					if ( xtracks.isEmpty() )
@@ -120,7 +120,7 @@ public class SpotifyHrefQuery
 			return xtracks.get(0);
 		}
 
-		final Set<String> artistNames = split(track.getArtist(), new String[] { "Featuring", "Feat\\.", "&" });
+		final Set<String> artistNames = split(track.getArtist(), new String[] { "Featuring", "Feat\\.", "&"});
 		/*
 		 * Collections.sort(xtracks, new Comparator<XTracks>() {
 		 * 
