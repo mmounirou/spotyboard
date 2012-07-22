@@ -8,7 +8,7 @@
 	<description>Generation of spotify playlist from BillBoard Charts</description>
 
 	<properties>
-		<main.class>com.mmounirou.spotiboard.SpotiBoard</main.class>
+		<main.class>com.mmounirou.spotiboard.SpotiRss</main.class>
 	</properties>
 
 	<build>
