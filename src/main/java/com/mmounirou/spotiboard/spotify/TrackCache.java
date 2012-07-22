@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nicolas Martignole
+ * Copyright (C) 2011 Mohamed MOUNIROU
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-import com.mmounirou.spotiboard.billboard.Track;
+import com.mmounirou.spotiboard.rss.Track;
 
 public class TrackCache implements Closeable
 {

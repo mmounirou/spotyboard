@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nicolas Martignole
+ * Copyright (C) 2011 Mohamed MOUNIROU
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.mmounirou.spotiboard.billboard;
+package com.mmounirou.spotiboard.rss;
 
 @SuppressWarnings("serial")
 public class ChartRssException extends Exception

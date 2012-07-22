@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nicolas Martignole
+ * Copyright (C) 2011 Mohamed MOUNIROU
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,8 +41,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.mmounirou.spotiboard.SpotiBoard;
-import com.mmounirou.spotiboard.billboard.Track;
+import com.mmounirou.spotiboard.SpotiRss;
+import com.mmounirou.spotiboard.rss.Track;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
@@ -83,11 +83,11 @@ public class SpotifyHrefQuery
 					Client client = Client.create();
 					WebResource resource = client.resource("http://ws.spotify.com");
 					String strXmlResult = resource.path("search/1/track").queryParam("q", track.getSong().replace(" ", "+")).get(String.class);
-
+					
 					List<XTracks> xtracks = parseResult(strXmlResult);
 					if ( xtracks.isEmpty() )
 					{
-						SpotiBoard.LOGGER.warn(String.format("no spotify song for %s:%s", track.getArtist(), track.getSong()));
+						SpotiRss.LOGGER.warn(String.format("no spotify song for %s:%s", track.getArtist(), track.getSong()));
 					}
 					else
 					{
@@ -137,7 +137,7 @@ public class SpotifyHrefQuery
 			return xtracks.get(0);
 		}
 
-		final Set<String> artistNames = split(track.getArtist(), new String[] { "Featuring", "Feat\\.", "&"});
+		final Set<String> artistNames = split(track.getArtist(), new String[] { "Featuring", "Feat\\.","feat\\.", "&"});
 		/*
 		 * Collections.sort(xtracks, new Comparator<XTracks>() {
 		 * 
@@ -193,7 +193,7 @@ public class SpotifyHrefQuery
 		if ( withArtistName.isEmpty() )
 		{
 			XTracks usedTrack = xtracks.get(0);
-			SpotiBoard.LOGGER.warn(String.format("no perfect match found for %s:%s (%s) use more popular song %s:%s", track.getArtist(), track.getSong(),
+			SpotiRss.LOGGER.warn(String.format("no perfect match found for %s:%s (%s) use more popular song %s:%s", track.getArtist(), track.getSong(),
 					Joiner.on(",").join(artistNames), usedTrack.getArtistName(), usedTrack.getTrackName()));
 			withArtistName = xtracks;
 		}

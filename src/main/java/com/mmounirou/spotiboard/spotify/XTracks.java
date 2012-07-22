@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nicolas Martignole
+ * Copyright (C) 2011 Mohamed MOUNIROU
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

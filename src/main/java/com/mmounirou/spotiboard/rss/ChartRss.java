@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Nicolas Martignole
+ * Copyright (C) 2011 Mohamed MOUNIROU
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.mmounirou.spotiboard.billboard;
+package com.mmounirou.spotiboard.rss;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,29 +35,32 @@ import org.rometools.fetcher.impl.FeedFetcherCache;
 import org.rometools.fetcher.impl.HttpURLFeedFetcher;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.mmounirou.spotiboard.SpotiBoard;
+import com.mmounirou.spotiboard.SpotiRss;
+import com.mmounirou.spotiboard.provider.Billboard;
+import com.mmounirou.spotiboard.provider.EntryToTrackConverter;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 
-public class BilboardChartRss
+public class ChartRss
 {
 
 	private final String m_title;
 	private final ImmutableSet<Track> m_songs;
 
-	public BilboardChartRss(String title, ImmutableSet<Track> songs)
+	public ChartRss(String title, ImmutableSet<Track> songs)
 	{
 		m_title = title;
 		m_songs = songs;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static BilboardChartRss getInstance(String strUrl) throws MalformedURLException, ChartRssException
+	public static ChartRss getInstance(String strUrl, final EntryToTrackConverter converter) throws MalformedURLException, ChartRssException
 	{
 		File rssCache = new File(FileUtils.getTempDirectory(), "billboard-charts");
 		rssCache.mkdirs();
@@ -79,10 +82,10 @@ public class BilboardChartRss
 				{
 					try
 					{
-						return toTrack(entry.getTitle());
+						return converter.apply(entry.getTitle());
 					} catch (Exception e)
 					{
-						SpotiBoard.LOGGER.error(String.format("fail to parse %s ", entry.getTitle()));
+						SpotiRss.LOGGER.error(String.format("fail to parse %s ", entry.getTitle()));
 						return null;
 					}
 
@@ -98,7 +101,7 @@ public class BilboardChartRss
 				}
 			});
 
-			return new BilboardChartRss(title, songs);
+			return new ChartRss(title, songs);
 		} catch (IllegalArgumentException e)
 		{
 			throw new ChartRssException(e);
@@ -117,17 +120,6 @@ public class BilboardChartRss
 
 	}
 
-	private static Track toTrack(String strTitle)
-	{
-		int rankPos = strTitle.indexOf(":");
-		String strRank = strTitle.substring(0, rankPos);
-		String[] titleArtist = strTitle.substring(rankPos + 1).split(",");
-		String strSong = titleArtist[0];
-		String strArtist = titleArtist[1];
-
-		return new Track(Integer.parseInt(strRank), strArtist, strSong);
-	}
-
 	public String getTitle()
 	{
 		return m_title;
@@ -140,7 +132,8 @@ public class BilboardChartRss
 
 	public static void main(String[] args) throws MalformedURLException, ChartRssException
 	{
-		Track track = toTrack("46: Pink Friday: Roman Reloaded, Nicki Minaj");
-		System.out.println(track);
+		ChartRss bilboardChartRss = ChartRss.getInstance("http://www.billboard.com/rss/charts/hot-100", new Billboard());
+		ImmutableSet<Track> songs = bilboardChartRss.getSongs();
+		System.out.println(Joiner.on("\n").join(songs));
 	}
 }
