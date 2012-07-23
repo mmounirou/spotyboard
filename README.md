@@ -6,10 +6,11 @@ from popular charts rss.
 
 Status
 ------
+
 We now support : 
 
-Billboard Charts
-Itunes Charts
+   - Billboard Charts
+   - Itunes Charts
 
 
 Playlists
