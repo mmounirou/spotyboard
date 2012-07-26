@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.mmounirou.spotiboard.spotify;
+package com.mmounirou.spoticharts.spotify;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -41,8 +41,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.mmounirou.spotiboard.SpotiRss;
-import com.mmounirou.spotiboard.rss.Track;
+import com.mmounirou.spoticharts.SpotiRss;
+import com.mmounirou.spoticharts.rss.Track;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 

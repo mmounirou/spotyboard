@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.mmounirou.spotiboard.spotify;
+package com.mmounirou.spoticharts.spotify;
 
 import java.io.Closeable;
 import java.io.File;
@@ -31,7 +31,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-import com.mmounirou.spotiboard.rss.Track;
+import com.mmounirou.spoticharts.rss.Track;
 
 public class TrackCache implements Closeable
 {

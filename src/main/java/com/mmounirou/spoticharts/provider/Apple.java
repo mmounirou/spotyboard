@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.mmounirou.spotiboard.provider;
+package com.mmounirou.spoticharts.provider;
 
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.mmounirou.spotiboard.rss.Track;
+import com.mmounirou.spoticharts.rss.Track;
 
 public class Apple implements EntryToTrackConverter
 {

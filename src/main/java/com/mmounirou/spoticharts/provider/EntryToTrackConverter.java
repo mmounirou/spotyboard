@@ -15,10 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.mmounirou.spotiboard.provider;
+package com.mmounirou.spoticharts.provider;
 
 import com.google.common.base.Function;
-import com.mmounirou.spotiboard.rss.Track;
+import com.mmounirou.spoticharts.rss.Track;
 
 public interface EntryToTrackConverter extends Function<String, Track>
 {

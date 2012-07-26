@@ -15,12 +15,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.mmounirou.spotiboard.rss;
+package com.mmounirou.spoticharts.spotify;
+
 
 @SuppressWarnings("serial")
-public class ChartRssException extends Exception
+public class SpotifyException extends Exception
 {
-	public ChartRssException(Throwable e)
+
+	public SpotifyException(Throwable e)
 	{
 		super(e);
 	}
