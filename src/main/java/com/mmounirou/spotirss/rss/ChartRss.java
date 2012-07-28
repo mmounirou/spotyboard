@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.mmounirou.spoticharts.rss;
+package com.mmounirou.spotirss.rss;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,9 +40,9 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.mmounirou.spoticharts.SpotiRss;
-import com.mmounirou.spoticharts.provider.Billboard;
-import com.mmounirou.spoticharts.provider.EntryToTrackConverter;
+import com.mmounirou.spotirss.SpotiRss;
+import com.mmounirou.spotirss.provider.Billboard;
+import com.mmounirou.spotirss.provider.EntryToTrackConverter;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;

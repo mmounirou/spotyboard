@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.mmounirou.spoticharts;
+package com.mmounirou.spotirss;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,13 +39,13 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.mmounirou.spoticharts.provider.EntryToTrackConverter;
-import com.mmounirou.spoticharts.rss.ChartRss;
-import com.mmounirou.spoticharts.rss.ChartRssException;
-import com.mmounirou.spoticharts.rss.Track;
-import com.mmounirou.spoticharts.spotify.SpotifyException;
-import com.mmounirou.spoticharts.spotify.SpotifyHrefQuery;
-import com.mmounirou.spoticharts.spotify.TrackCache;
+import com.mmounirou.spotirss.provider.EntryToTrackConverter;
+import com.mmounirou.spotirss.rss.ChartRss;
+import com.mmounirou.spotirss.rss.ChartRssException;
+import com.mmounirou.spotirss.rss.Track;
+import com.mmounirou.spotirss.spotify.SpotifyException;
+import com.mmounirou.spotirss.spotify.SpotifyHrefQuery;
+import com.mmounirou.spotirss.spotify.TrackCache;
 
 public class SpotiRss
 {

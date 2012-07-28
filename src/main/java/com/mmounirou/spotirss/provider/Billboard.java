@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package com.mmounirou.spoticharts.provider;
+package com.mmounirou.spotirss.provider;
 
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.mmounirou.spoticharts.rss.Track;
+import com.mmounirou.spotirss.rss.Track;
 
 public class Billboard implements EntryToTrackConverter
 {

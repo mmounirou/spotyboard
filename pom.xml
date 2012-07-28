@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.mmounirou.spoticharts</groupId>
-	<artifactId>spoticharts</artifactId>
+	<groupId>com.mmounirou.spotirss</groupId>
+	<artifactId>spotirss</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SpotiCharts</name>
+	<name>SpotiRss</name>
 	<description>Generation of spotify playlist from RssCharts</description>
 
 	<properties>
-		<main.class>com.mmounirou.spotiboard.SpotiRss</main.class>
+		<main.class>com.mmounirou.spotirss.SpotiRss</main.class>
 	</properties>
 
 	<build>
