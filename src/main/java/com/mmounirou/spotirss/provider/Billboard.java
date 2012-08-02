@@ -17,11 +17,14 @@
  */
 package com.mmounirou.spotirss.provider;
 
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.mmounirou.spotirss.rss.Track;
+import com.mmounirou.spotirss.tools.StringTools;
 
 public class Billboard implements EntryToTrackConverter
 {
@@ -33,13 +36,15 @@ public class Billboard implements EntryToTrackConverter
 		int rankPos = strTitle.indexOf(":");
 		String strRank = strTitle.substring(0, rankPos);
 		String[] titleArtist = strTitle.substring(rankPos + 1).split(",");
-		String strSong =StringUtils.remove(titleArtist[0],String.format("(%s)", StringUtils.substringBetween(titleArtist[0], "(", ")")));
+		String strSong = StringUtils.remove(titleArtist[0], String.format("(%s)", StringUtils.substringBetween(titleArtist[0], "(", ")")));
 		String strArtist = titleArtist[1];
 
-		return new Track(Integer.parseInt(strRank), strArtist, strSong);
+		final Set<String> artistNames = StringTools.split(strArtist, new String[] { "Featuring", "Feat\\.", "feat\\.", "&",","});
+
+		return new Track(Integer.parseInt(strRank), artistNames, strSong);
 
 	}
-	
+
 	public static void main(String[] args)
 	{
 		System.out.println(new Billboard().apply("1:Drake Featuring Lil Wayne, HYFR (Hell Yeah F*****g Right)"));

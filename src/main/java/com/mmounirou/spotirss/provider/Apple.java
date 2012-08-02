@@ -17,11 +17,14 @@
  */
 package com.mmounirou.spotirss.provider;
 
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.mmounirou.spotirss.rss.Track;
+import com.mmounirou.spotirss.tools.StringTools;
 
 public class Apple implements EntryToTrackConverter
 {
@@ -55,8 +58,10 @@ public class Apple implements EntryToTrackConverter
 		{
 			strArtist = strArtist + " " + strfeaturing;
 		}
+		
+		final Set<String> artistNames =StringTools.split(strArtist, new String[] { "Featuring", "Feat\\.","feat\\.", "&",","});
 
-		return new Track(Integer.parseInt(strRank), strArtist, strSong);
+		return new Track(Integer.parseInt(strRank), artistNames, strSong);
 
 	}
 

@@ -29,7 +29,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.mmounirou.spotirss.rss.Track;
 
@@ -59,7 +61,7 @@ public class TrackCache implements Closeable
 				String m_artist = extendedTrackSplitted[0];
 				String m_song = extendedTrackSplitted[1];
 				String m_href = extendedTrackSplitted[2];
-				Track track = new Track(m_artist, m_song);
+				Track track = new Track(Sets.newHashSet(m_artist.split("&")), m_song);
 				m_cache.put(track, m_href);
 			}
 		}
@@ -77,7 +79,7 @@ public class TrackCache implements Closeable
 		m_cache.put(track, strHref);
 		try
 		{
-			stream.write(String.format("%s,%s,%s\n", track.getArtist(), track.getSong(), strHref));
+			stream.write(String.format("%s,%s,%s\n", Joiner.on("&").join(track.getArtists()), track.getSong(), strHref));
 		} catch (IOException e)
 		{
 			// just a try write

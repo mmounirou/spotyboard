@@ -17,28 +17,32 @@
  */
 package com.mmounirou.spotirss.rss;
 
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 public class Track
 {
 
-	protected static final Track NULL = new Track("", "");
+	protected static final Track NULL = new Track(Sets.<String>newTreeSet(), "");
 	private final int m_rank;
-	private final String m_artist;
+	private final Set<String> m_artists = Sets.newHashSet();
 	private final String m_song;
 
-	public Track(@Nonnull int rank, @Nonnull String strArtist, @Nonnull String strSong)
+	public Track(@Nonnull int rank, @Nonnull Set<String> strArtists, @Nonnull String strSong)
 	{
 		m_rank = rank;
-		m_artist = strArtist;
-		m_song = strSong;
+		m_artists.addAll(strArtists);
+		m_song = strSong.trim().toLowerCase();
 	}
 
-	public Track(@Nonnull String strArtist, @Nonnull String strSong)
+	public Track(@Nonnull Set<String> strArtists, @Nonnull String strSong)
 	{
-		this(-1, strArtist, strSong);
+		this(-1, strArtists, strSong);
 	}
 
 	public int getRank()
@@ -46,9 +50,9 @@ public class Track
 		return m_rank;
 	}
 
-	public String getArtist()
+	public Set<String> getArtists()
 	{
-		return m_artist;
+		return m_artists;
 	}
 
 	public String getSong()
@@ -59,7 +63,7 @@ public class Track
 	@Override
 	public int hashCode()
 	{
-		return Objects.hashCode(m_artist, m_song);
+		return Objects.hashCode(m_artists, m_song);
 	}
 
 	@Override
@@ -78,13 +82,13 @@ public class Track
 			return false;
 		}
 		Track other = (Track) obj;
-		return Objects.equal(m_artist, other.m_artist) && Objects.equal(m_song, other.m_song);
+		return Objects.equal(m_song, other.m_song) && m_artists.containsAll(other.m_artists) && other.m_artists.containsAll(m_artists);
 	}
 
 	@Override
 	public String toString()
 	{
-		return String.format("%d : %s , %s", m_rank, m_artist, m_song);
+		return String.format("%d : %s , %s", m_rank, Joiner.on(" & ").join(m_artists), m_song);
 	}
 
 }

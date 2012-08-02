@@ -18,13 +18,12 @@
 package com.mmounirou.spotirss.spotify;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nullable;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.io.IOUtils;
@@ -32,10 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -61,18 +57,17 @@ public class SpotifyHrefQuery
 		Map<Track, String> result = Maps.newLinkedHashMap();
 		int queryCount = 0;
 
-		for ( Track track : tracks )
+		for (Track track : tracks)
 		{
 			String strHref = getFromCache(track);
-			if ( strHref == null )
+			if (strHref == null)
 			{
-				if ( queryCount != 0 && (queryCount % QUERY_LIMIT_BY_SECONDS) == 0 )
+				if (queryCount != 0 && (queryCount % QUERY_LIMIT_BY_SECONDS) == 0)
 				{
 					try
 					{
 						Thread.sleep(TimeUnit.SECONDS.toMillis(1));
-					}
-					catch ( InterruptedException e )
+					} catch (InterruptedException e)
 					{
 						// DO nothing
 					}
@@ -83,29 +78,26 @@ public class SpotifyHrefQuery
 					Client client = Client.create();
 					WebResource resource = client.resource("http://ws.spotify.com");
 					String strXmlResult = resource.path("search/1/track").queryParam("q", track.getSong().replace(" ", "+")).get(String.class);
-					
+					// System.out.println(strXmlResult);
 					List<XTracks> xtracks = parseResult(strXmlResult);
-					if ( xtracks.isEmpty() )
+					if (xtracks.isEmpty())
 					{
-						SpotiRss.LOGGER.warn(String.format("no spotify song for %s:%s", track.getArtist(), track.getSong()));
-					}
-					else
+						SpotiRss.LOGGER.warn(String.format("no spotify song for %s:%s", Joiner.on("&").join(track.getArtists()), track.getSong()));
+					} else
 					{
 						strHref = findBestMatchingTrack(xtracks, track).getHref();
 						putInCache(track, strHref);
 						queryCount++;
 					}
-				}
-				catch ( IOException e )
+				} catch (IOException e)
 				{
 					throw new SpotifyException(e);
-				}
-				catch ( SAXException e )
+				} catch (SAXException e)
 				{
 					throw new SpotifyException(e);
 				}
 			}
-			if ( strHref != null )
+			if (strHref != null)
 			{
 				result.put(track, strHref);
 			}
@@ -115,7 +107,7 @@ public class SpotifyHrefQuery
 
 	private void putInCache(Track track, String strHref)
 	{
-		if ( m_trackCache != null )
+		if (m_trackCache != null)
 		{
 			m_trackCache.put(track, strHref);
 		}
@@ -123,7 +115,7 @@ public class SpotifyHrefQuery
 
 	private String getFromCache(Track track)
 	{
-		if ( m_trackCache != null )
+		if (m_trackCache != null)
 		{
 			return m_trackCache.get(track);
 		}
@@ -132,116 +124,63 @@ public class SpotifyHrefQuery
 
 	private XTracks findBestMatchingTrack(List<XTracks> xtracks, final Track track)
 	{
-		if ( xtracks.size() == 1 )
+		if (xtracks.size() == 1)
 		{
 			return xtracks.get(0);
 		}
 
-		final Set<String> artistNames = split(track.getArtist(), new String[] { "Featuring", "Feat\\.","feat\\.", "&"});
-		/*
-		 * Collections.sort(xtracks, new Comparator<XTracks>() {
-		 * 
-		 * @Override public int compare(XTracks o1, XTracks o2) { return
-		 * o1.getAvailability().compareTo(o2.getAvailability()); } });
-		 */
-
-		// find with the perfect match
-		List<XTracks> withArtistName = Lists.newArrayList(Iterables.filter(xtracks, new Predicate<XTracks>()
+		TreeMap<Integer, XTracks> sortedTrack = Maps.newTreeMap();
+		for (XTracks xTrack : xtracks)
 		{
-			@Override
-			public boolean apply(@Nullable XTracks xtrack)
-			{
-				return artistNames.contains(xtrack.getArtistName().trim()) && StringUtils.equalsIgnoreCase(xtrack.getTrackName().trim(), track.getSong().trim());
-			}
-		}));
-
-		if ( withArtistName.isEmpty() )
-		{
-			// find with the perfect artist name
-			withArtistName = Lists.newArrayList(Iterables.filter(xtracks, new Predicate<XTracks>()
-			{
-				@Override
-				public boolean apply(@Nullable XTracks xtrack)
-				{
-					return artistNames.contains(xtrack.getArtistName().trim());
-				}
-			}));
+			sortedTrack.put(getLevenshteinDistance(xTrack, track), xTrack);
 		}
 
-		// Try with artist name is contained (featuring in artist name)
-		if ( withArtistName.isEmpty() )
-		{
-			withArtistName = Lists.newArrayList(Iterables.filter(xtracks, new Predicate<XTracks>()
-			{
-				@Override
-				public boolean apply(@Nullable final XTracks xtrack)
-				{
-					return !FluentIterable.from(artistNames).filter(new Predicate<String>()
-					{
+		Integer minDistance = Iterables.get(sortedTrack.keySet(), 0);
+		XTracks choosedTrack = sortedTrack.get(minDistance);
 
-						@Override
-						public boolean apply(@Nullable String artistName)
-						{
-							return StringUtils.containsIgnoreCase(xtrack.getArtistName(), artistName);
-						}
-					}).isEmpty();
-				}
-			}));
+		if (minDistance > 1)
+		{
+			SpotiRss.LOGGER.info(String.format("(%s:%s) choosed for (%s:%s) with distance %d", choosedTrack.getTrackName(), Joiner.on(",").join(choosedTrack.getArtists()),
+					track.getSong(), Joiner.on(",").join(track.getArtists()), minDistance));
+		} else
+		{
+			SpotiRss.LOGGER.debug(String.format("(%s:%s) choosed for (%s:%s) with distance %d", choosedTrack.getTrackName(), Joiner.on(",").join(choosedTrack.getArtists()),
+					track.getSong(), Joiner.on(",").join(track.getArtists()), minDistance));
 		}
 
-		// no match found use all result
-		if ( withArtistName.isEmpty() )
-		{
-			XTracks usedTrack = xtracks.get(0);
-			SpotiRss.LOGGER.warn(String.format("no perfect match found for %s:%s (%s) use more popular song %s:%s", track.getArtist(), track.getSong(),
-					Joiner.on(",").join(artistNames), usedTrack.getArtistName(), usedTrack.getTrackName()));
-			withArtistName = xtracks;
-		}
-
-		return withArtistName.get(0);
-
+		return choosedTrack;
 	}
 
-	private static Set<String> split(String artist, String[] separators)
+	private int getLevenshteinDistance(XTracks xtrack, Track track)
 	{
-		Set<String> result = Sets.newLinkedHashSet();
-		result.add(artist);
+		int trackDistance = StringUtils.getLevenshteinDistance(xtrack.getTrackName(), track.getSong());
+		int artistDistance = getArtistDistance(track, xtrack);
 
-		int previousSize = 0;
-		do
+	//	System.out.println(" trackDistance = " + trackDistance + " artistDistance = " + artistDistance + " track = " + xtrack);
+
+		return (trackDistance + 1) * (artistDistance+1) + artistDistance;
+	}
+
+	private int getArtistDistance(final Track track, XTracks xtrack)
+	{
+		int artistDistance = 0;
+		for (String strArtist : xtrack.getArtists())
 		{
-			previousSize = result.size();
-			Set<String> temp = Sets.newHashSet(result);
-			result.clear();
-			for ( String elmt : temp )
-			{
-				for ( String separator : separators )
-				{
-					List<String> splitted = Arrays.asList(elmt.split(separator));
-					if ( splitted.size() > 1 )
-					{
-						result.addAll(splitted);
-					}
-				}
-			}
-			if ( result.isEmpty() )
-			{
-				result = temp;
-			}
-
+			Integer minDistance = getMinDistance(strArtist, track.getArtists());
+			artistDistance += (minDistance == 0) ? 5 * (-xtrack.getArtists().size()) : minDistance;
 		}
-		while ( previousSize != result.size() );
+		artistDistance = artistDistance / xtrack.getArtists().size();
+		return (artistDistance < 0) ? 0 : artistDistance;
+	}
 
-		return Sets.newHashSet(Iterables.transform(result, new Function<String, String>()
+	private Integer getMinDistance(String strArtist, Set<String> artists)
+	{
+		Set<Integer> treeSet = new TreeSet<Integer>();
+		for (String artist : artists)
 		{
-
-			@Override
-			@Nullable
-			public String apply(@Nullable String input)
-			{
-				return input.trim();
-			}
-		}));
+			treeSet.add(StringUtils.getLevenshteinDistance(strArtist, artist));
+		}
+		return treeSet.iterator().next();
 	}
 
 	private static List<XTracks> parseResult(String strResult) throws IOException, SAXException
@@ -260,15 +199,26 @@ public class SpotifyHrefQuery
 		digester.addSetNext("tracks/track", "add");
 		digester.addSetProperties("tracks/track");
 		digester.addBeanPropertySetter("tracks/track/name", "trackName");
-		digester.addBeanPropertySetter("tracks/track/artist/name", "artistName");
+		digester.addCallMethod("tracks/track/artist/name", "addArtist", 0);
 		digester.addBeanPropertySetter("tracks/track/album/availability/territories", "availability");
 	}
 
 	public static void main(String[] args) throws IOException, SpotifyException
 	{
-		Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track("Adele", "Set Fire To The Rain")));
-		System.out.println(trackHrefs);
+		//@formatter:off
+		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("p!nk)"),"blow me")));
+		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("sia","david guetta"),"titanium")));
+		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("janelle monˆe","fun."),"we are young ")));
+		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("kanye west","big sean", "pusha t", "2 chainz"),"mercy")));
+		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("selena gomez","the scene"),"love you like a love song")));
+		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("che'nelle"),"believe")));
+		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("dj khaled"),"take it to the head")));
+		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("jason mraz"),"i won't give up")));
+		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("adele"),"set fire to the rain")));
+		Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("pitbull","shakira"),"get it started")));
 
+		//@formatter:on , 
+		System.out.println(trackHrefs);
 	}
 
 }

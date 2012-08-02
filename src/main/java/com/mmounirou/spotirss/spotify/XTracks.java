@@ -17,10 +17,17 @@
  */
 package com.mmounirou.spotirss.spotify;
 
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
+
 public class XTracks
 {
 	private String m_trackName;
-	private String m_artistName;
+	private Set<String> m_artists = Sets.newHashSet();
 	private String m_availability;
 	private String m_href;
 
@@ -31,17 +38,36 @@ public class XTracks
 
 	public void setTrackName(String trackName)
 	{
-		m_trackName = trackName;
+		String strSong = StringUtils.replace(trackName, String.format("(%s)", StringUtils.substringBetween(trackName, "(", ")")), "x");
+		String[] strSongSplitted = strSong.split("featuring");
+
+		if(strSongSplitted.length > 1)
+		{
+			strSong = strSongSplitted[0];
+			addArtist(strSongSplitted[1]);
+		}
+		
+		String[] strSongWithFeaturing = strSong.split("-");
+		if (strSongWithFeaturing.length > 1 && strSongWithFeaturing[1].contains("feat."))
+		{
+			strSong = strSongWithFeaturing[0];
+			addArtist(StringUtils.remove(strSongWithFeaturing[1], "feat."));
+		}
+		m_trackName = strSong.trim().toLowerCase();
 	}
 
-	public String getArtistName()
+	public Set<String> getArtists()
 	{
-		return m_artistName;
+		return m_artists;
 	}
 
-	public void setArtistName(String artistName)
+	public void addArtist(String artistName)
 	{
-		m_artistName = artistName;
+		String[] strArtists = artistName.split("&");
+		for (String strArtist : strArtists)
+		{
+			m_artists.add(strArtist.trim().toLowerCase());
+		}
 	}
 
 	public String getAvailability()
@@ -67,7 +93,7 @@ public class XTracks
 	@Override
 	public String toString()
 	{
-		return "XTracks [m_trackName=" + m_trackName + ", m_artistName=" + m_artistName + ", m_href=" + m_href + ", m_availability=" + m_availability + "]";
+		return "XTracks [m_trackName=" + m_trackName + ", m_artists=" + Joiner.on(" & ").join(m_artists) + ", m_href=" + m_href + ", m_availability=" + m_availability + "]";
 	}
 
 }
