@@ -38,8 +38,8 @@ public class Apple implements EntryToTrackConverter
 
 		String strArtistAndSong = strTitle.substring(rankPos + 1);
 
-		String strTempSong = strArtistAndSong.substring(0, strArtistAndSong.lastIndexOf("-"));
-		String strTempArtist = strArtistAndSong.substring(strArtistAndSong.lastIndexOf("-") + 1);
+		String strTempSong = strArtistAndSong.substring(0, strArtistAndSong.lastIndexOf(" - "));
+		String strTempArtist = strArtistAndSong.substring(strArtistAndSong.lastIndexOf(" - ") + 2);
 
 		String strSong = strTempSong;
 
