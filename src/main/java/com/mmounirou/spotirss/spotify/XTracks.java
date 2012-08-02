@@ -44,26 +44,46 @@ public class XTracks
 
 	private String cleanTrackName(String trackName)
 	{
-		String strSong = StringUtils.remove(trackName, " - Explicit Version");
-		strSong = StringUtils.remove(strSong, " - Live");
+		String[] spotifyExtensions = new String[] { " - Explicit Version", " - Live" };
+		String strSong = trackName;
 
-		String extendedinfo = null;
-		do
+		for ( String extensions : spotifyExtensions )
 		{
-			extendedinfo = StringUtils.defaultString(StringUtils.substringBetween(strSong, "(", ")"));
-			String[] artists = extendedinfo.split("feat.");
-			if ( artists != null && artists.length > 1 )
+			if ( StringUtils.contains(strSong, extensions) )
 			{
-				strSong = StringUtils.replace(strSong, String.format("(%s)", extendedinfo), "");
-				m_artistsInTrackName.addAll(cleanArtist(artists[1]));
+				strSong = "X " + StringUtils.remove(trackName, extensions);
 			}
-			else
+		}
+
+		String[] braces = { "[]", "()" };
+
+		for ( String brace : braces )
+		{
+
+			String extendedinfo = null;
+			do
 			{
-				strSong = StringUtils.replace(strSong, String.format("(%s)", extendedinfo), "x");
+				extendedinfo = StringUtils.defaultString(StringUtils.substringBetween(strSong, brace.charAt(0) + "", brace.charAt(1) + ""));
+				if ( StringUtils.isNotBlank(extendedinfo) )
+				{
+					if ( StringUtils.startsWith(extendedinfo, "feat.") )
+					{
+						String strArtist = StringUtils.removeStart("feat.", extendedinfo);
+						strSong = StringUtils.replace(strSong, String.format("%c%s%c", brace.charAt(0), extendedinfo, brace.charAt(1)), "");
+						m_artistsInTrackName.addAll(cleanArtist(strArtist));
+					}
+
+					else
+					{
+						strSong = StringUtils.replace(strSong, String.format("%c%s%c", brace.charAt(0), extendedinfo, brace.charAt(1)), "");
+						strSong = "X " + strSong;
+					}
+				}
+
 			}
+			while ( StringUtils.isNotBlank(extendedinfo) );
 
 		}
-		while ( StringUtils.isNotBlank(extendedinfo) );
 
 		String[] strSongSplitted = strSong.split("featuring");
 		if ( strSongSplitted.length > 1 )
@@ -78,6 +98,7 @@ public class XTracks
 			strSong = strSongWithFeaturing[0];
 			m_artistsInTrackName.add(StringUtils.remove(strSongWithFeaturing[1], "feat."));
 		}
+
 		return strSong.trim().toLowerCase();
 	}
 
