@@ -45,7 +45,7 @@ public class XTracks
 
 	private String cleanTrackName(String trackName)
 	{
-		String[] spotifyExtensions = new String[] { " - Explicit Version", " - Live" };
+		String[] spotifyExtensions = new String[] { " - Explicit Version", " - Live"," - Radio Edit" };
 		String strSong = trackName;
 
 		for ( String extensions : spotifyExtensions )
