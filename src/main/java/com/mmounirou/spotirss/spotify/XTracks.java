@@ -24,6 +24,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.mmounirou.spotirss.tools.StringTools;
 
 public class XTracks
 {
@@ -110,7 +111,7 @@ public class XTracks
 
 	private List<String> cleanArtist(String artistName)
 	{
-		Iterable<String> transform = FluentIterable.from(Lists.newArrayList(artistName.split("&"))).transform(new Function<String, String>()
+		Iterable<String> transform = FluentIterable.from(StringTools.split(artistName,new String[]{"&"," and "})).transform(new Function<String, String>()
 		{
 
 			@Override
