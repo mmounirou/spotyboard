@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.digester.Digester;
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
@@ -74,7 +75,7 @@ public class SpotifyHrefQuery
 				{
 					Client client = Client.create();
 					WebResource resource = client.resource("http://ws.spotify.com");
-					String strXmlResult = resource.path("search/1/track").queryParam("q", track.getSong().replace(" ", "+")).get(String.class);
+					String strXmlResult = resource.path("search/1/track").queryParam("q",URIUtil.encodePathQuery(track.getSong())).get(String.class);
 					// System.out.println(strXmlResult);
 					List<XTracks> xtracks = parseResult(strXmlResult);
 					if ( xtracks.isEmpty() )
@@ -157,8 +158,7 @@ public class SpotifyHrefQuery
 		int trackDistance = StringUtils.getLevenshteinDistance(xtrack.getCleanedTrackName(), track.getSong());
 		int artistDistance = getArtistDistance(track, xtrack);
 
-		// System.out.println(" trackDistance = " + trackDistance + " artistDistance = " + artistDistance + " track = "
-		// + xtrack);
+	//	 System.out.println(" trackDistance = " + trackDistance + " artistDistance = " + artistDistance + " track = " + xtrack);
 
 		return (trackDistance + 1) * (artistDistance + 1) + artistDistance;
 	}
@@ -220,7 +220,7 @@ public class SpotifyHrefQuery
 		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("pitbull","shakira"),"get it started")));
 		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("lil wayne","big sean"),"my homies still")));
 		//Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("kenny chesney"),"feel like a rock star")));
-		Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("snoop dogg","t-pain"),"boom")));
+		Map<Track, String> trackHrefs = new SpotifyHrefQuery(null).getTrackHrefs(Sets.newHashSet(new Track(Sets.newHashSet("ne-yo","calvin harris"),"let's go")));
 		//@formatter:on , 
 		System.out.println(trackHrefs);
 	}
