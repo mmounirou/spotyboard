@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -97,7 +98,16 @@ public class XTracks
 		if ( strSongWithFeaturing.length > 1 && strSongWithFeaturing[1].contains("feat.") )
 		{
 			strSong = strSongWithFeaturing[0];
-			m_artistsInTrackName.add(StringUtils.remove(strSongWithFeaturing[1], "feat."));
+			m_artistsInTrackName.addAll(cleanArtist(StringUtils.remove(strSongWithFeaturing[1], "feat.")));
+		}
+		else
+		{
+			strSongWithFeaturing = strSong.split("feat.");
+			if(strSongWithFeaturing.length > 1)
+			{
+				strSong = strSongWithFeaturing[0];
+				m_artistsInTrackName.addAll(cleanArtist(strSongWithFeaturing[1]));
+			}
 		}
 
 		return strSong.trim().toLowerCase();
@@ -158,4 +168,11 @@ public class XTracks
 	{
 		return Sets.union(m_artists, m_artistsInTrackName);
 	}
+
+	@Override
+	public String toString()
+	{
+		return "["+ m_trackName + "=" +Joiner.on(",").join(getAllArtists()) + ":" + m_originalName + "]";
+	}
+	
 }
