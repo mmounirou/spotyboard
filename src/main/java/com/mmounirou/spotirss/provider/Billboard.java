@@ -35,11 +35,15 @@ public class Billboard implements EntryToTrackConverter
 	{
 		int rankPos = strTitle.indexOf(":");
 		String strRank = strTitle.substring(0, rankPos);
-		String[] titleArtist = strTitle.substring(rankPos + 1).split(",");
-		String strSong = StringUtils.remove(titleArtist[0], String.format("(%s)", StringUtils.substringBetween(titleArtist[0], "(", ")")));
-		String strArtist = titleArtist[1];
 
-		final Set<String> artistNames = StringTools.split(strArtist, new String[] { "Featuring", "Feat\\.", "feat\\.", "&",","});
+		String strArtistName = strTitle.substring(rankPos + 1);
+		String strDefaultTitle  = strArtistName.substring(0, strArtistName.lastIndexOf(","));
+		String strDefaultArtist = strArtistName.substring(strArtistName.lastIndexOf(",") + 1);
+
+		String strSong = StringUtils.remove(strDefaultTitle, String.format("(%s)", StringUtils.substringBetween(strDefaultTitle, "(", ")")));
+		String strArtist = strDefaultArtist;
+
+		final Set<String> artistNames = StringTools.split(strArtist, new String[] { "Featuring", "Feat\\.", "feat\\.", "&", "," });
 
 		return new Track(Integer.parseInt(strRank), artistNames, strSong);
 
@@ -47,7 +51,7 @@ public class Billboard implements EntryToTrackConverter
 
 	public static void main(String[] args)
 	{
-		System.out.println(new Billboard().apply("1:Drake Featuring Lil Wayne, HYFR (Hell Yeah F*****g Right)"));
+		System.out.println(new Billboard().apply("35: Work Hard, Play Hard, Wiz Khalifa"));
 	}
 
 }
