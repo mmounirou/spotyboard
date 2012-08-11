@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
@@ -39,13 +40,18 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.mmounirou.spotirss.json.Playlist;
+import com.mmounirou.spotirss.json.Playlists;
 import com.mmounirou.spotirss.provider.EntryToTrackConverter;
 import com.mmounirou.spotirss.rss.ChartRss;
 import com.mmounirou.spotirss.rss.ChartRssException;
 import com.mmounirou.spotirss.rss.Track;
-import com.mmounirou.spotirss.spotify.SpotifyException;
-import com.mmounirou.spotirss.spotify.SpotifyHrefQuery;
-import com.mmounirou.spotirss.spotify.TrackCache;
+import com.mmounirou.spotirss.spotify.exceptions.SpotifyClientException;
+import com.mmounirou.spotirss.spotify.exceptions.SpotifyException;
+import com.mmounirou.spotirss.spotify.tracks.SpotifyHrefQuery;
+import com.mmounirou.spotirss.spotify.tracks.TrackCache;
+import com.mmounirou.spotirss.spotify.user.SpotifyClient;
 
 public class SpotiRss
 {
@@ -58,16 +64,34 @@ public class SpotiRss
 	 * @throws ClassNotFoundException 
 	 * @throws IllegalAccessException 
 	 * @throws InstantiationException 
+	 * @throws SpotifyClientException 
 	 * @throws ChartRssException 
 	 * @throws SpotifyException 
 	 */
-	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException
+	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, SpotifyClientException
 	{
 		if (args.length == 0)
 		{
 			System.err.println("usage : java -jar spotiboard.jar <charts-folder>");
 			return;
 		}
+
+		Properties connProperties = new Properties();
+		InputStream inStream = SpotiRss.class.getResourceAsStream("/spotify-server.properties");
+		try
+		{
+			connProperties.load(inStream);
+		} finally
+		{
+			IOUtils.closeQuietly(inStream);
+		}
+
+		String host = connProperties.getProperty("host");
+		int port = Integer.parseInt(connProperties.getProperty("port"));
+		String user = connProperties.getProperty("user");
+
+		final SpotifyClient spotifyClient = new SpotifyClient(host, port, user);
+		final Map<String, Playlist> playlistsByTitle = getPlaylistsByTitle(spotifyClient);
 
 		final File outputDir = new File(args[0]);
 		outputDir.mkdirs();
@@ -99,12 +123,22 @@ public class SpotiRss
 							ChartRss bilboardChartRss = ChartRss.getInstance(chartRss, converter);
 							Map<Track, String> trackHrefs = hrefQuery.getTrackHrefs(bilboardChartRss.getSongs());
 
-							File resultFile = new File(resultDir, bilboardChartRss.getTitle());
+							String strTitle = bilboardChartRss.getTitle();
+							File resultFile = new File(resultDir, strTitle);
 							List<String> lines = Lists.newLinkedList(FluentIterable.from(trackHrefs.keySet()).transform(Functions.toStringFunction()));
 							lines.addAll(trackHrefs.values());
 							FileUtils.writeLines(resultFile, Charsets.UTF_8.displayName(), lines);
 
-							LOGGER.info(String.format("%s chart exported in %s in %d s", bilboardChartRss.getTitle(), resultFile.getAbsolutePath(),
+							Playlist playlist = playlistsByTitle.get(strTitle);
+							if (playlist != null)
+							{
+								playlist.getTracks().clear();
+								playlist.getTracks().addAll(trackHrefs.values());
+								spotifyClient.patch(playlist);
+								LOGGER.info(String.format("%s chart exported patched", strTitle));
+							}
+
+							LOGGER.info(String.format("%s chart exported in %s in %d s", strTitle, resultFile.getAbsolutePath(),
 									(int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - begin)));
 
 						} catch (Exception e)
@@ -126,6 +160,21 @@ public class SpotiRss
 			cache.close();
 		}
 
+	}
+
+	private static Map<String, Playlist> getPlaylistsByTitle(SpotifyClient spotifyClient) throws SpotifyClientException
+	{
+		Map<String, Playlist> playlistByTitle = Maps.newHashMap();
+
+		Playlists allPlaylists = spotifyClient.getAllPlaylists();
+		for (Playlist playlist : allPlaylists.getPlaylists())
+		{
+			if (StringUtils.isNotBlank(playlist.getTitle()))
+			{
+				playlistByTitle.put(playlist.getTitle().trim(), playlist);
+			}
+		}
+		return playlistByTitle;
 	}
 
 	private static Iterable<String> getCharts(String strProvider) throws IOException

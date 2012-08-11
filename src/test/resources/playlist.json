@@ -1,0 +1,20 @@
+{"playlists":
+    [
+	    {"creator":"Marzouk Mounirou"},
+	    {"creator":"Marzouk Mounirou"},
+	    {"creator":"Marzouk Mounirou",
+	     "subscriberCount":0,
+	     "tracks":["spotify:track:7yWQEfTdvmPyZtt6IbSGp7","spotify:track:3BRCdmj8e8TbFaAoTmFQkC","spotify:track:5np1HM7PLoEi6bbI9njCSs","spotify:track:6SKtDQt8ZW6ez4H6VuDAqa","spotify:track:11WMF1TuTeNEn1FDc0HBLP","spotify:track:1rUQmXEy41tXwHIKFECNTa","spotify:track:7lQWEF6aUtrT9LH6oI9jlm","spotify:track:5FnFgKn8rMH7xJQjDOvD9H","spotify:track:4md6OFGc1VMVUtx3gTGYeP","spotify:track:02GjIfCpwttPAikjm5Hwcb","spotify:track:6Ltglcr92i5aFMcI2asYtP","spotify:track:6vsUGMDpeJ2VgcAY7CrnkZ","spotify:track:4qWAzbkwVlPRepBrBuX0Gw","spotify:track:0Lwm890T6DWDFmk3EfBAYR","spotify:track:1nhmRFaUlHckNqPQut2uP8","spotify:track:5kIcrM3QVD4BQPFMszQnU1","spotify:track:6KYidW6nj2Jlj0l3iRrbVn","spotify:track:4kflIGfjdZJW4ot2ioixTB","spotify:track:3STTVKfJGTdhbg5aLppEzX","spotify:track:32CS1c7IyC8jzeFs55Q9n4","spotify:track:0oA6W4Ilssj2wdecwHGg69","spotify:track:6fpkgxGrTPAjwKSg77IXe9","spotify:track:72OmK5V8H4YQs6HpAvcESI","spotify:track:1ptXy1egG0axmk7v3OYNoi","spotify:track:7rcxcbn2iUVCneSt9uFAI0"],
+	     "uri":"spotify:user:mmounirou:playlist:3ewp2djhfvprpEknGPx3YK",
+	     "title":"test",
+	     "collaborative":false
+	    },
+	    {"creator":"Marzouk Mounirou",
+	     "subscriberCount":0,
+	     "tracks":["spotify:track:3BRCdmj8e8TbFaAoTmFQkC","spotify:track:5np1HM7PLoEi6bbI9njCSs","spotify:track:6SKtDQt8ZW6ez4H6VuDAqa","spotify:track:11WMF1TuTeNEn1FDc0HBLP","spotify:track:1rUQmXEy41tXwHIKFECNTa","spotify:track:7lQWEF6aUtrT9LH6oI9jlm","spotify:track:5FnFgKn8rMH7xJQjDOvD9H","spotify:track:4md6OFGc1VMVUtx3gTGYeP","spotify:track:02GjIfCpwttPAikjm5Hwcb","spotify:track:6Ltglcr92i5aFMcI2asYtP","spotify:track:6vsUGMDpeJ2VgcAY7CrnkZ","spotify:track:4qWAzbkwVlPRepBrBuX0Gw","spotify:track:0Lwm890T6DWDFmk3EfBAYR","spotify:track:1nhmRFaUlHckNqPQut2uP8","spotify:track:5kIcrM3QVD4BQPFMszQnU1","spotify:track:6KYidW6nj2Jlj0l3iRrbVn","spotify:track:4kflIGfjdZJW4ot2ioixTB","spotify:track:3STTVKfJGTdhbg5aLppEzX","spotify:track:32CS1c7IyC8jzeFs55Q9n4","spotify:track:0oA6W4Ilssj2wdecwHGg69","spotify:track:6fpkgxGrTPAjwKSg77IXe9","spotify:track:72OmK5V8H4YQs6HpAvcESI","spotify:track:1ptXy1egG0axmk7v3OYNoi","spotify:track:7rcxcbn2iUVCneSt9uFAI0"],
+	     "uri":"spotify:user:mmounirou:playlist:0gDnA5VbSHpmczVgcHtFrL",
+	     "title":"Billboard YouTube Chart",
+	     "collaborative":false
+	    }
+    ]
+}

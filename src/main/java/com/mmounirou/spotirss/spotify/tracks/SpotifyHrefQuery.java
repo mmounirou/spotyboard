@@ -11,7 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package com.mmounirou.spotirss.spotify;
+package com.mmounirou.spotirss.spotify.tracks;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,6 +36,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mmounirou.spotirss.SpotiRss;
 import com.mmounirou.spotirss.rss.Track;
+import com.mmounirou.spotirss.spotify.exceptions.SpotifyException;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
