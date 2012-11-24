@@ -56,7 +56,7 @@ import com.mmounirou.spotirss.spotify.user.SpotifyClient;
 public class SpotiRss
 {
 	public static final Logger LOGGER = Logger.getLogger(SpotiRss.class);
-	public static final List<String> PROVIDERS = Arrays.asList("apple", "billboard");
+	public static final List<String> PROVIDERS = Arrays.asList("billboard","apple");
 
 	/**
 	 * @param args

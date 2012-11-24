@@ -1,15 +1,31 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.mmounirou.spotirss</groupId>
-	<artifactId>spotirss</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>SpotiRss</name>
-	<description>Generation of spotify playlist from RssCharts</description>
+	<groupId>com.mmounirou.spotyboard</groupId>
+	<artifactId>spotyboard</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<name>SpotyBoard</name>
+	<description>Generation of spotify playlist for BillBoard Charts</description>
 
 	<properties>
 		<main.class>com.mmounirou.spotirss.SpotiRss</main.class>
 	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>mmounirou.repos</id>
+			<url>dav:https://repository-mmounirou.forge.cloudbees.com/release/</url>
+		</repository>
+	</distributionManagement>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/mmounirou/spotyboard/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>https://mmounirou.ci.cloudbees.com/job/spotyboard/</url>
+	</ciManagement>
+
 
 	<build>
 		<plugins>
@@ -47,7 +63,15 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav</artifactId>
+				<version>1.0-beta-2</version>
+			</extension>
+		</extensions>
 	</build>
+
 
 	<dependencies>
 		<dependency>
@@ -114,4 +138,9 @@
 			<version>1.2.14</version>
 		</dependency>
 	</dependencies>
+
+	<scm>
+		<connection>scm:git:git@github.com:mmounirou/spotyboard.git</connection>
+		<url>https://github.com/mmounirou/spotyboard</url>
+	</scm>
 </project>
