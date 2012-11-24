@@ -10,3 +10,5 @@
 .classpath
 *.log
 .DS_Store
+
+/charts/billboard/Billboard Hot 100 Chart
